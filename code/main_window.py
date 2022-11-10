@@ -5,7 +5,7 @@ from database import TDLdb
 from PyQt5 import QtCore
 from PyQt5 import uic
 from PyQt5 import QtGui
-from PyQt5.QtWidgets import QApplication, QMainWindow, QInputDialog, QTableWidgetItem, QMessageBox
+from PyQt5.QtWidgets import QMainWindow, QInputDialog, QTableWidgetItem, QMessageBox, QWidget
 
 
 class MainWindow(QMainWindow):

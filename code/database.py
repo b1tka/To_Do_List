@@ -1,7 +1,7 @@
 import sqlite3
 
 from pprint import pprint
-
+from export import export
 
 class TDLdb:
     def __init__(self):
@@ -101,6 +101,13 @@ class TDLdb:
         query = '''UPDATE tasks SET complete = True WHERE id_task = ?'''
         self.cursor.execute(query, (task_id[0],))
         self.db_connection.commit()
+
+    def export_file(self):
+        query_profile = '''SELECT * FROM profiles WHERE id = ?'''
+        query_lists = '''SELECT * FROM lists WHERE id_profile = ?'''
+        query_tasks = '''SELECT * FROM tasks WHERE id_list IN (?)'''
+        data = list()
+        for i in range(len())
 
     def close_connection(self):
         self.db_connection.close()
