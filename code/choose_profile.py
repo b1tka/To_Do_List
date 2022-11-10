@@ -23,7 +23,7 @@ class ChooseYourProfile(QMainWindow):
         profiles = self.database.get_profiles()
         self.profiles_list.clear()
         for elem in profiles:
-            self.profiles_list.addItem(elem[-1])
+            self.profiles_list.addItem(str(elem[-1]))
 
     def add_new_profile(self):
         name, ok_pressed = QInputDialog.getText(self, 'Введите название профиля',

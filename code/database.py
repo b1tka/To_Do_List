@@ -4,8 +4,8 @@ from pprint import pprint
 from export_func import export
 from import_func import import_func
 
-class TDLdb:
 
+class TDLdb:
     def __init__(self):
         self.db_connection = sqlite3.connect('TDL_db.db')
         self.cursor = self.db_connection.cursor()
@@ -63,9 +63,10 @@ class TDLdb:
         self.cursor.execute(query, (profile, list_name,))
         self.db_connection.commit()
 
-    def add_task(self, list_id, text):
-        query = '''INSERT INTO tasks(id_list, task, complete) VALUES(?, ?, False)'''
-        self.cursor.execute(query, (list_id[0], text,))
+    def add_task(self, list_id, text, bool=False):
+        query = '''INSERT INTO tasks(id_list, task, complete) VALUES(?, ?, ?)'''
+        print()
+        self.cursor.execute(query, (list_id[0], text, bool,))
         self.db_connection.commit()
 
     def edit_list(self, list_id, text):
@@ -108,8 +109,9 @@ class TDLdb:
     def export_file(self, profile_id):
         query_profile = '''SELECT * FROM profiles WHERE id = ?'''
         query_lists = '''SELECT * FROM lists WHERE id_profile = ?'''
-        query_tasks = f'''SELECT * FROM tasks WHERE id_list IN {tuple(self.get_list_ids(profile_id))}'''
-        data = list()
+        ids = tuple(self.get_list_ids(profile_id))
+        query_tasks = f'''SELECT * FROM tasks WHERE id_list IN {tuple(self.get_list_ids(profile_id)) if len(ids) > 0
+        else ids[0]}'''
         profile = self.cursor.execute(query_profile, (profile_id,)).fetchall()
         lists = self.cursor.execute(query_lists, (profile_id,)).fetchall()
         tasks = self.cursor.execute(query_tasks).fetchall()
@@ -123,17 +125,36 @@ class TDLdb:
         export(data)
 
     def import_file(self, fname):
+
+        def string_to_list(string):
+            string = string[2:-2]
+            result = string.split('), (')
+
+            def clean(elem):
+                elem = list(elem)
+                for i, letter in enumerate(elem):
+                    if letter == "'":
+                        del elem[i]
+                return ''.join(elem)
+
+            data = list(map(lambda x: tuple(x.split(', ')), map(clean, result)))
+            return data
+
         data = import_func(fname)[0]
         self.add_profiles(data['profile'])
         id = self.get_id(data['profile'])[0]
+        data['lists'] = string_to_list(data['lists'])
+        data['tasks'] = string_to_list(data['tasks'])
         for list1 in data['lists']:
             self.add_lists(id, list1[-1])
-            for i, task in enumerate(data['tasks']):
+            for j, elem in enumerate(data['tasks']):
                 list_id = self.get_list_id(id, list1[-1])[0]
-                if task[0] == list_id:
-                    data['tasks'][i][0] = list_id
+                if data['tasks'][j][0] == list1[0]:
+                    data['tasks'][j] = list(data['tasks'][j])
+                    data['tasks'][j][0] = list_id
+                    data['tasks'][j] = tuple(data['tasks'][j])
         for task in data['tasks']:
-            self.add_task(task[0], task[-1])
+            self.add_task((task[0],), task[-2])
 
     def close_connection(self):
         self.db_connection.close()

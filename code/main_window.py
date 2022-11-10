@@ -2,10 +2,11 @@ import sys
 
 from edit_task import EditTask
 from database import TDLdb
+from PyQt5.Qt import QBrush
 from PyQt5 import QtCore
 from PyQt5 import uic
-from PyQt5 import QtGui
-from PyQt5.QtWidgets import QMainWindow, QInputDialog, QTableWidgetItem, QMessageBox, QWidget
+from PyQt5.QtGui import QColor
+from PyQt5.QtWidgets import QMainWindow, QInputDialog, QTableWidgetItem, QMessageBox, QWidget, QHeaderView
 
 
 class MainWindow(QMainWindow):
@@ -25,6 +26,9 @@ class MainWindow(QMainWindow):
         self.database = TDLdb()
         self.profile_id = id
         self.set_lists()
+        header = self.table_tasks.horizontalHeader()
+        header.setSectionResizeMode(QHeaderView.Stretch)
+        header.setSectionResizeMode(1, QHeaderView.ResizeToContents)
 
     def set_lists(self):
         data = self.database.get_lists(self.profile_id)
@@ -38,6 +42,9 @@ class MainWindow(QMainWindow):
         self.table_tasks.clear()
         self.table_tasks.setRowCount(len(data))
         self.table_tasks.setColumnCount(2)
+        header = self.table_tasks.horizontalHeader()
+        header.setSectionResizeMode(QHeaderView.Stretch)
+        header.setSectionResizeMode(1, QHeaderView.ResizeToContents)
         titles = ['Задание', 'Состояние']
         for i, elem in enumerate(titles):
             self.table_tasks.setHorizontalHeaderItem(i, QTableWidgetItem(str(elem)))
@@ -46,7 +53,6 @@ class MainWindow(QMainWindow):
                 item = QTableWidgetItem(str(val))
                 item.setFlags(QtCore.Qt.ItemIsEnabled)
                 self.table_tasks.setItem(i, j, item)
-
 
     def add_list(self):
         name, ok_pressed = QInputDialog.getText(self, 'Введите название листа',

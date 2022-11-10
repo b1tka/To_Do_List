@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>974</width>
-    <height>578</height>
+    <width>921</width>
+    <height>458</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -69,6 +69,13 @@
          </spacer>
         </item>
         <item>
+         <widget class="QCheckBox" name="sortbutt">
+          <property name="text">
+           <string>Спрятать выолненные</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QPushButton" name="back_button">
           <property name="maximumSize">
            <size>
@@ -108,6 +115,24 @@
          <layout class="QVBoxLayout" name="verticalLayout_2">
           <item>
            <widget class="QTableWidget" name="table_tasks">
+            <property name="alternatingRowColors">
+             <bool>false</bool>
+            </property>
+            <property name="selectionBehavior">
+             <enum>QAbstractItemView::SelectItems</enum>
+            </property>
+            <property name="gridStyle">
+             <enum>Qt::SolidLine</enum>
+            </property>
+            <attribute name="horizontalHeaderCascadingSectionResizes">
+             <bool>true</bool>
+            </attribute>
+            <attribute name="horizontalHeaderDefaultSectionSize">
+             <number>100</number>
+            </attribute>
+            <attribute name="horizontalHeaderHighlightSections">
+             <bool>true</bool>
+            </attribute>
             <column>
              <property name="text">
               <string>Задание</string>
@@ -124,6 +149,10 @@
            <widget class="QPushButton" name="completed_button">
             <property name="text">
              <string>Выполнено</string>
+            </property>
+            <property name="icon">
+             <iconset>
+              <normaloff>../galochka.png</normaloff>../galochka.png</iconset>
             </property>
            </widget>
           </item>
