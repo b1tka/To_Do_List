@@ -1,9 +1,11 @@
 import sqlite3
 
 from pprint import pprint
-from export import export
+from export_func import export
+from import_func import import_func
 
 class TDLdb:
+
     def __init__(self):
         self.db_connection = sqlite3.connect('TDL_db.db')
         self.cursor = self.db_connection.cursor()
@@ -24,8 +26,9 @@ class TDLdb:
         return data
 
     def get_list_ids(self, profile_id):
-        query = '''SELECT * FROM lists WHERE id_profile = ?'''
-        data = self.cursor.execute(query, (profile_id,))
+        query = '''SELECT id_list FROM lists WHERE id_profile = ?'''
+        data = self.cursor.execute(query, (profile_id,)).fetchall()
+        data = list(map(lambda x: x[0], data))
         return data
 
     def get_lists(self, id_profile):
@@ -78,10 +81,10 @@ class TDLdb:
 
     def delete_list(self, list_id):
         query = '''DELETE FROM lists WHERE id_list = ?'''
-        self.cursor.execute(query, (list_id[0],))
+        self.cursor.execute(query, (list_id,))
         self.db_connection.commit()
         query = '''DELETE FROM tasks WHERE id_list = ?'''
-        self.cursor.execute(query, (list_id[0],))
+        self.cursor.execute(query, (list_id,))
         self.db_connection.commit()
 
     def delete_task(self, task_id):
@@ -102,12 +105,35 @@ class TDLdb:
         self.cursor.execute(query, (task_id[0],))
         self.db_connection.commit()
 
-    def export_file(self):
+    def export_file(self, profile_id):
         query_profile = '''SELECT * FROM profiles WHERE id = ?'''
         query_lists = '''SELECT * FROM lists WHERE id_profile = ?'''
-        query_tasks = '''SELECT * FROM tasks WHERE id_list IN (?)'''
+        query_tasks = f'''SELECT * FROM tasks WHERE id_list IN {tuple(self.get_list_ids(profile_id))}'''
         data = list()
-        for i in range(len())
+        profile = self.cursor.execute(query_profile, (profile_id,)).fetchall()
+        lists = self.cursor.execute(query_lists, (profile_id,)).fetchall()
+        tasks = self.cursor.execute(query_tasks).fetchall()
+        for i in range(1):
+            pass
+        data = [{
+            'profile': profile[0][1],
+            'lists': lists,
+            'tasks': list(map(lambda x: tuple(list(x)[1:]), tasks))
+        }]
+        export(data)
+
+    def import_file(self, fname):
+        data = import_func(fname)[0]
+        self.add_profiles(data['profile'])
+        id = self.get_id(data['profile'])[0]
+        for list1 in data['lists']:
+            self.add_lists(id, list1[-1])
+            for i, task in enumerate(data['tasks']):
+                list_id = self.get_list_id(id, list1[-1])[0]
+                if task[0] == list_id:
+                    data['tasks'][i][0] = list_id
+        for task in data['tasks']:
+            self.add_task(task[0], task[-1])
 
     def close_connection(self):
         self.db_connection.close()

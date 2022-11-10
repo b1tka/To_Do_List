@@ -64,24 +64,24 @@
      <x>0</x>
      <y>0</y>
      <width>824</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">
     <property name="title">
      <string>Файл</string>
     </property>
-    <addaction name="import_file"/>
-    <addaction name="export_file"/>
+    <addaction name="import_but"/>
+    <addaction name="export_but"/>
    </widget>
    <addaction name="menu"/>
   </widget>
-  <action name="import_file">
+  <action name="import_but">
    <property name="text">
     <string>Импортировать файл</string>
    </property>
   </action>
-  <action name="export_file">
+  <action name="export_but">
    <property name="text">
     <string>Экспортировать файл</string>
    </property>

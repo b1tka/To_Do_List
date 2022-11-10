@@ -4,7 +4,7 @@ from main_window import MainWindow
 from database import TDLdb
 from Exceptions import NotSelected
 from PyQt5 import uic
-from PyQt5.QtWidgets import QApplication, QMainWindow, QInputDialog, QMessageBox
+from PyQt5.QtWidgets import QApplication, QMainWindow, QInputDialog, QMessageBox, QFileDialog
 
 
 class ChooseYourProfile(QMainWindow):
@@ -14,6 +14,8 @@ class ChooseYourProfile(QMainWindow):
         self.choose_button.clicked.connect(self.choose_profile)
         self.create_button.clicked.connect(self.add_new_profile)
         self.delete_button.clicked.connect(self.delete_profile)
+        self.import_but.triggered.connect(self.import_func)
+        self.export_but.triggered.connect(self.export_func)
         self.database = TDLdb()
         self.set_table()
 
@@ -47,6 +49,14 @@ class ChooseYourProfile(QMainWindow):
         id = self.database.get_id(name)[0]
         self.database.delete_profile(id)
         self.set_table()
+
+    def import_func(self):
+        fname = QFileDialog.getOpenFileName(self, 'Выбрать картинку', '')[0]
+        self.database.import_file(fname)
+        self.set_table()
+
+    def export_func(self):
+        self.database.export_file(self.database.get_id(self.profiles_list.currentItem().text())[0])
 
     def close_app(self):
         self.close()
